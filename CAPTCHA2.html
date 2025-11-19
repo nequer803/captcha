@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Piźdcha</title>
+<style>
+  body { 
+    font-family: Arial, sans-serif;
+    background: #FFFFFF; /* niebieski */
+    display: flex;
+    justify-content: center;
+    padding-top: 40px;
+  }
+
+  .captcha-box {
+    width: 360px;
+    background: #2563eb; /* niebieski */
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 18px rgba(0,0,0,0.35);
+    color: white;
+    transform: translateY(0);
+    transition: transform .25s;
+  }
+
+  h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+  }
+
+  /* Siatka */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 320px;
+    height: 320px;
+    margin: auto;
+    gap: 2px;
+  }
+
+  .cell {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    background-image: url("https://media.discordapp.net/attachments/1280909811504123995/1440521257152938136/content.png?ex=691e7577&is=691d23f7&hm=a6bcea8196a64c48787f74e43e3ac2910dd2c770ae0aef8cadc07065982eff79&=&format=webp&quality=lossless");
+    background-size: 320px 320px;
+    border-radius: 6px;
+    transition: transform .2s, box-shadow .2s;
+  }
+
+  /* Hover efekt pola */
+  .cell:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  }
+
+  /* Po zaznaczeniu */
+  .cell.selected {
+    outline: 4px solid #93c5fd;
+    transform: scale(1.04);
+  }
+
+  /* Animowany przycisk */
+  .button {
+    width: 100%;
+    background: #1e40af;
+    border: none;
+    color: white;
+    padding: 14px;
+    margin-top: 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 17px;
+    font-weight: bold;
+    transition: background .25s, transform .25s;
+    animation: pulse 2s infinite ease-in-out;
+  }
+
+  .button:hover {
+    background: #1d4ed8;
+    transform: scale(1.05);
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+
+  /* Animowany komunikat */
+  #result {
+    margin-top: 18px;
+    font-size: 19px;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .45s ease-out, transform .45s ease-out;
+  }
+
+  #result.show {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+
+</style>
+</head>
+<body>
+
+<div class="captcha-box">
+
+  <h2>Zaznacz wszystkie pola które zawierają Szymonice Piździce</h2>
+
+  <div id="grid" class="grid"></div>
+
+  <button class="button" id="check">Weryfikuj</button>
+
+  <div id="result"></div>
+
+</div>
+
+<script>
+  const grid = document.getElementById("grid");
+  const result = document.getElementById("result");
+
+  let cells = [];
+
+  // Tworzymy siatkę 3×3
+  for (let y = 0; y < 3; y++) {
+    for (let x = 0; x < 3; x++) {
+      const index = y * 3 + x + 1;
+      const div = document.createElement("div");
+
+      div.classList.add("cell");
+      div.style.backgroundPosition = `${-x * 105}px ${-y * 105}px`;
+      div.dataset.index = index;
+
+      div.onclick = () => div.classList.toggle("selected");
+
+      grid.appendChild(div);
+      cells.push(div);
+    }
+  }
+
+  document.getElementById("check").onclick = () => {
+    const selected = cells
+      .filter(c => c.classList.contains("selected"))
+      .map(c => Number(c.dataset.index));
+
+    const correct = [2, 5, 8];
+
+    result.classList.remove("show");
+
+    setTimeout(() => {
+      if (selected.length === correct.length &&
+          selected.every(v => correct.includes(v))) {
+
+        result.textContent = "Gratki, Jebać piździora";
+
+      } else {
+        result.textContent = "Zpiździłeś to bracie";
+      }
+
+      result.classList.add("show");
+
+    }, 50);
+  };
+</script>
+
+</body>
+</html>
